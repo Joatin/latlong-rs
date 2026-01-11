@@ -2,6 +2,9 @@
 name = "latlong"
 version = "0.1.0"
 edition = "2024"
+description = "Wrapper type for common coordinate systems"
+keywords = ["Coordinates"]
+license = "Apache-2.0 OR MIT"
 
 [dependencies]
 serde = { version = "1.0", default-features = false, features = ["derive"], optional = true }
