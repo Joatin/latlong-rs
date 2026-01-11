@@ -1,6 +1,7 @@
-use num::Float;
+use crate::Float;
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct TangentPosition<T: Float> {
-    x: T,
-    y: T
+    pub x: T,
+    pub y: T
 }

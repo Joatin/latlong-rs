@@ -1,18 +1,18 @@
-use std::fmt;
-use std::ops::{Div, Mul, Sub};
-use num::{Float, NumCast};
-use num::traits::Euclid;
+use core::ops::{Div, Mul, Sub};
+use crate::Float;
+use core::fmt;
 
 /// Right Ascension
-#[derive(Clone, Copy, serde::Serialize, serde::Deserialize)]
-#[serde(transparent)]
+#[derive(Clone, Copy)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(transparent))]
 pub struct RightAscension<T: Float> {
     radians: T,
 }
 
-impl<T: Float + Euclid> RightAscension<T> {
+impl<T: Float> RightAscension<T> {
     pub fn from_radians(radians: T) -> Self {
-        Self { radians: radians.rem_euclid(&NumCast::from(std::f64::consts::TAU).unwrap()) }
+        Self { radians }
     }
 
     pub fn from_degrees(deg: T) -> Self {
@@ -40,20 +40,20 @@ impl<T: Float + Euclid> RightAscension<T> {
     }
 }
 
-impl<T: Float + std::fmt::Display + Euclid> fmt::Debug for RightAscension<T> {
+impl<T: Float> fmt::Debug for RightAscension<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self)
     }
 }
 
-impl<T: Float + std::fmt::Display + Euclid> fmt::Display for RightAscension<T> {
+impl<T: Float> fmt::Display for RightAscension<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let total_hours = self.degrees() / NumCast::from(15.0).unwrap();
+        let total_hours = self.degrees() / T::from(15.0);
         let h = total_hours.floor();
-        let m = ((total_hours - h) * NumCast::from(60.0).unwrap()).floor();
-        let s = (total_hours - h - m / NumCast::from(60.0).unwrap()) * NumCast::from(3600.0).unwrap();
+        let m = ((total_hours - h) * T::from(60.0)).floor();
+        let s = (total_hours - h - m / T::from(60.0)) * T::from(3600.0);
 
-        write!(f, "{:02}h {:02}m {:05.2}s", h.to_i32().unwrap(), m.to_i32().unwrap(), s)
+        write!(f, "{:02}h {:02}m {:05.2}s", h, m, s)
     }
 }
 
@@ -77,7 +77,7 @@ impl<T: Float> Div<T> for RightAscension<T> {
     }
 }
 
-impl<T: Float + num::traits::Euclid> Mul<T> for RightAscension<T> {
+impl<T: Float> Mul<T> for RightAscension<T> {
     type Output = RightAscension<T>;
 
     fn mul(self, rhs: T) -> Self::Output {
@@ -89,6 +89,6 @@ const PRECISION: f32 = 100_000.0;
 
 impl<T: Float> PartialEq for RightAscension<T> {
     fn eq(&self, other: &RightAscension<T>) -> bool {
-        (self.radians * NumCast::from(PRECISION).unwrap()).round() == (other.radians * NumCast::from(PRECISION).unwrap()).round()
+        (self.radians * T::from(PRECISION)).round() == (other.radians * T::from(PRECISION)).round()
     }
 }

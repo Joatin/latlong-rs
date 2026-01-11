@@ -1,10 +1,11 @@
-use std::fmt;
-use std::ops::{Div, Sub};
-use num::{Float, NumCast};
+use core::ops::{Div, Sub};
+use crate::Float;
+use core::fmt;
 
 /// Declination
-#[derive(Clone, Copy, serde::Serialize, serde::Deserialize)]
-#[serde(transparent)]
+#[derive(Clone, Copy)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(transparent))]
 pub struct Declination<T: Float> {
     radians: T,
 }
@@ -41,7 +42,7 @@ impl<T: Float> Declination<T> {
     }
 }
 
-impl<T: Float + std::fmt::Display> fmt::Debug for Declination<T> {
+impl<T: Float> fmt::Debug for Declination<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
@@ -51,22 +52,22 @@ impl<T: Float + std::fmt::Display> fmt::Debug for Declination<T> {
     }
 }
 
-impl<T: Float + std::fmt::Display> fmt::Display for Declination<T> {
+impl<T: Float> fmt::Display for Declination<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let deg = self.degrees();
-        let sign = if deg < NumCast::from(0.0).unwrap() { '-' } else { '+' };
+        let sign = if deg < T::from(0.0) { '-' } else { '+' };
         let abs = deg.abs();
 
         let d = abs.floor();
-        let m = ((abs - d) * NumCast::from(60.0).unwrap()).floor();
-        let s = (abs - d - m / NumCast::from(60.0).unwrap()) * NumCast::from(3600.0).unwrap();
+        let m = ((abs - d) * T::from(60.0)).floor();
+        let s = (abs - d - m / T::from(60.0)) * T::from(3600.0);
 
         write!(
             f,
             "{}{:02}° {:02}' {:05.2}\"",
             sign,
-            d.to_i32().unwrap(),
-            m.to_i32().unwrap(),
+            d,
+            m,
             s
         )
     }
@@ -96,6 +97,6 @@ const PRECISION: f64 = 100_000.0;
 
 impl<T: Float> PartialEq for Declination<T> {
     fn eq(&self, other: &Self) -> bool {
-        (self.radians * NumCast::from(PRECISION).unwrap()).round() == (other.radians * NumCast::from(PRECISION).unwrap()).round()
+        (self.radians * T::from(PRECISION)).round() == (other.radians * T::from(PRECISION)).round()
     }
 }
