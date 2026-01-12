@@ -3,7 +3,7 @@ use crate::Float;
 use core::fmt;
 
 /// Declination
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(transparent))]
 pub struct Declination<T: Float> {
