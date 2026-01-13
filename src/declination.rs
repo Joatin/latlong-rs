@@ -1,6 +1,7 @@
 use core::ops::{Div, Sub};
-use crate::Float;
+use crate::{Float};
 use core::fmt;
+use std::ops::Mul;
 
 /// Declination
 #[derive(Clone, Copy, PartialOrd)]
@@ -90,6 +91,14 @@ impl<T: Float> Div<T> for Declination<T> {
         Self {
             radians: self.radians / rhs,
         }
+    }
+}
+
+impl<T: Float> Mul<T> for Declination<T> {
+    type Output = Self;
+
+    fn mul(self, rhs: T) -> Self::Output {
+        Declination::from_radians(self.radians * rhs)
     }
 }
 
