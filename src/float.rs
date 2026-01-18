@@ -2,9 +2,10 @@ use core::ops::Div;
 use core::fmt::{Debug, Display};
 use core::ops::Mul;
 use core::ops::Sub;
+use std::ops::Add;
 
 /// We do not use num crate since it is not no_std
-pub trait Float: Into<Self> + Copy + Debug + Div<Self, Output = Self> + Mul<Self, Output = Self> + Sub<Self, Output = Self> + PartialEq + PartialOrd + Display {
+pub trait Float: Into<Self> + Copy + Debug + Div<Self, Output = Self> + Mul<Self, Output = Self> + Sub<Self, Output = Self> + Add<Self, Output = Self>  + PartialEq + PartialOrd + Display {
 
     fn floor(self) -> Self;
     fn is_nan(self) -> bool;
